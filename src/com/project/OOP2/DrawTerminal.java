@@ -23,8 +23,8 @@ public class DrawTerminal {
 		float xPosition = Math.min(x1, x2);
 		float yPosition = Math.min(y1, y2);
 		//Get width and height for generating RoundRectangle2D
-		float width = Math.abs(x1 + x2);
-		float height = Math.abs(y1 + y2);
+		float width = Math.abs(x2 - x1);
+		float height = Math.abs(y2 - y1);
 		//Create RoundRectangle2D
 		this.drawTerminal = new RoundRectangle2D.Float(xPosition, yPosition, width, height, 45, 45);
 		

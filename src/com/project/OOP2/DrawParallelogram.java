@@ -23,8 +23,8 @@ public class DrawParallelogram {
 		float xa = Math.min(x1, x2);
 		float xb = Math.max(x1, x2);
 		//Set adjusted positions
-		float xc = xa + 20;
-		float xd = xb + 20;
+		float xc = xa - 30;
+		float xd = xb - 30;
 				
 		//Draw parallelogram
 		this.drawParallelogram = new Path2D.Float();

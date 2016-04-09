@@ -13,7 +13,7 @@ public class DrawArrow {
 	double x1, x2, y1, y2;
 	Path2D.Float drawArrow;
 	Shape finishedArrow;
-	int arrowLength = 5;
+	int arrowLength = 30;
 	
 	public DrawArrow(float x1, float x2, float y1, float y2){
 		this.x1 = x1;

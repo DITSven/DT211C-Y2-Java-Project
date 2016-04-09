@@ -30,6 +30,9 @@ public class DrawingCanvas extends JComponent{
 	
 	//Constructor for monitoring events.
 	public DrawingCanvas(){
+		
+		
+		
 		//add mouse listeners to canvas
 		addMouseListener(new MouseAdapter(){
 			//for when mouse pressed get x and y
@@ -44,6 +47,7 @@ public class DrawingCanvas extends JComponent{
 				/*Code taken from: 
 				 * http://www.newthinktank.com/2012/07/java-video-tutorial-49/
 				 */
+				
 				Shape aShape = null;
 				/*End of copied code*/
 				
@@ -52,21 +56,24 @@ public class DrawingCanvas extends JComponent{
 					DrawTerminal drawTerminal = new DrawTerminal(xDrawStart, xDrawEnd, yDrawStart, yDrawEnd);
 					aShape = drawTerminal.returnShape();
 				}
-				if (NewPage.drawOption == 2){
+				else if (NewPage.drawOption == 2){
 					DrawArrow drawArrow = new DrawArrow(xDrawStart, xDrawEnd, yDrawStart, yDrawEnd);
 					aShape = drawArrow.returnShape();
 				}
-				if (NewPage.drawOption == 3){
+				else if (NewPage.drawOption == 3){
 					DrawRectangle drawRectangle = new DrawRectangle(xDrawStart, xDrawEnd, yDrawStart, yDrawEnd);
 					aShape = drawRectangle.returnShape();
 				}
-				if (NewPage.drawOption == 4){
+				else if (NewPage.drawOption == 4){
 					DrawParallelogram drawParallelogram = new DrawParallelogram(xDrawStart, xDrawEnd, yDrawStart, yDrawEnd);
 					aShape = drawParallelogram.returnShape();
 				}
-				if (NewPage.drawOption == 5){
+				else if (NewPage.drawOption == 5){
 					DrawRhombus drawRhombus = new DrawRhombus(xDrawStart, xDrawEnd, yDrawStart, yDrawEnd);
 					aShape = drawRhombus.returnShape();
+				}
+				else{
+					
 				}
 				//add shapes to arrayList
 				/*Code taken from: 
@@ -83,7 +90,8 @@ public class DrawingCanvas extends JComponent{
 	}
 	
 	public void paint(Graphics g){
-    	
+	
+		
 		graphicsSettings = (Graphics2D)g;
 		/*Code taken from: 
 		 * http://www.newthinktank.com/2012/07/java-video-tutorial-49/
@@ -97,9 +105,11 @@ public class DrawingCanvas extends JComponent{
             
 		graphicsSettings.setStroke(new BasicStroke(3));
 
+		
+		
         for (Shape s : shapes){
         	graphicsSettings.draw(s);
         	}
     }
-	/*Rnd of code copied*/
+	/*End of code copied*/
 }
