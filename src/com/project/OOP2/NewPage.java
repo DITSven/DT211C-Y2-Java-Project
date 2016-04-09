@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+@SuppressWarnings("serial")
 public class NewPage extends JFrame implements ActionListener {
 
 	JPanel sidePanel, editorPanel;
@@ -23,6 +24,10 @@ public class NewPage extends JFrame implements ActionListener {
 	Menu newPageFile, newPageEdit, newPageHelp;
 	MenuItem newPageNew, newPageOpen, newPageSave, newPageUndo, newPageAbout;
 	Color white;
+	
+	//Set variable to control which option is selected for
+	//different drawing tasks.
+	static int drawOption;
 	//NewPage constructor
 	public NewPage(String pageTitle){
 		super(pageTitle);
@@ -93,8 +98,7 @@ public class NewPage extends JFrame implements ActionListener {
 		
 		//Add canvas to editorPanel
 		editorPanel.setLayout(new GridLayout(1,1));
-		newPageCanvas = new Canvas();
-		newPageCanvas.setBackground(white);
+		DrawingCanvas newPageCanvas = new DrawingCanvas();
 		editorPanel.add(newPageCanvas);
 		 
 		//Add panels
@@ -140,20 +144,21 @@ public class NewPage extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(this, "Created by Eoin Mulvey(C14752305)\nDT211C/2\n2016", "About", JOptionPane.PLAIN_MESSAGE);
 		}
 		if(source == terminalButton){
-			JOptionPane.showMessageDialog(this, "Placeholder");
+			drawOption = 1;
 		}
 		if(source == arrowButton){
-			JOptionPane.showMessageDialog(this, "Placeholder");
+			drawOption = 2;
 		}
 		if(source == rectangleButton){
-			JOptionPane.showMessageDialog(this, "Placeholder");
+			drawOption = 3;
 		}
 		if(source == parallelogramButton){
-			JOptionPane.showMessageDialog(this, "Placeholder");
+			drawOption = 4;
 		}
 		if(source == rhombusButton){
-			JOptionPane.showMessageDialog(this, "Placeholder");
+			drawOption = 5;
 		}
 	}
 	
+
 }

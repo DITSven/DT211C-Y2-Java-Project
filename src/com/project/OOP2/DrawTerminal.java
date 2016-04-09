@@ -7,11 +7,12 @@
  */
 package com.project.OOP2;
 
+import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 
 public class DrawTerminal {
 	float x1, x2, y1, y2;
-	RoundRectangle2D.Float drawTerminal;
+	Shape drawTerminal;
 	
 	public DrawTerminal(float x1, float x2,	float y1, float y2){
 		this.x1 = x1;
@@ -27,6 +28,10 @@ public class DrawTerminal {
 		//Create RoundRectangle2D
 		this.drawTerminal = new RoundRectangle2D.Float(xPosition, yPosition, width, height, 45, 45);
 		
+	}
+	
+	public Shape returnShape(){
+		return this.drawTerminal;
 	}
 	
 }

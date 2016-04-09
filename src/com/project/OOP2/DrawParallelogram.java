@@ -6,11 +6,13 @@
  */
 package com.project.OOP2;
 
+import java.awt.Shape;
 import java.awt.geom.Path2D;
 
 public class DrawParallelogram {
 	float x1, x2, y1, y2;
 	Path2D.Float drawParallelogram;
+	Shape finishedParallelogram;
 	
 	public DrawParallelogram(float x1, float x2, float y1, float y2){
 		this.x1 = x1;
@@ -32,5 +34,10 @@ public class DrawParallelogram {
 		drawParallelogram.lineTo(xc, y2);
 		drawParallelogram.lineTo(xa, y1);
 		drawParallelogram.closePath();
+		this.finishedParallelogram = drawParallelogram;
+	}
+	
+	public Shape returnShape(){
+		return this.finishedParallelogram;
 	}
 }

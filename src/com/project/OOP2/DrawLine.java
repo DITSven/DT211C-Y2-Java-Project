@@ -6,11 +6,12 @@
  */
 package com.project.OOP2;
 
+import java.awt.Shape;
 import java.awt.geom.Line2D;
 
-public class DrawLine{
+public class DrawLine {
 	float x1, x2, y1, y2;
-	Line2D.Float drawLine;
+	Shape drawLine;
 	
 	public DrawLine(float x1, float x2,	float y1, float y2){
 		this.x1 = x1;
@@ -19,6 +20,10 @@ public class DrawLine{
 		this.y2 = y2;
 		this.drawLine = new Line2D.Float(x1, x2, y1, y2);
 		
+	}
+	
+	public Shape returnShape(){
+		return this.drawLine;
 	}
 	
 }

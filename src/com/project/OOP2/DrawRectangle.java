@@ -6,11 +6,12 @@
  */
 package com.project.OOP2;
 
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
 public class DrawRectangle {
 	float x1, x2, y1, y2;
-	Rectangle2D.Float drawRectangle;
+	Shape drawRectangle;
 	
 	public DrawRectangle(float x1, float x2, float y1, float y2){
 		this.x1 = x1;
@@ -25,6 +26,10 @@ public class DrawRectangle {
 		float height = Math.abs(y1 + y2);
 		this.drawRectangle = new Rectangle2D.Float(xPosition, yPosition, width, height);
 		
+	}
+	
+	public Shape returnShape(){
+		return this.drawRectangle;
 	}
 	
 }

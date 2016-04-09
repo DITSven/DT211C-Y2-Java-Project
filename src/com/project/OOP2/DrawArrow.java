@@ -6,11 +6,13 @@
  */
 package com.project.OOP2;
 
+import java.awt.Shape;
 import java.awt.geom.Path2D;
 
 public class DrawArrow {
 	double x1, x2, y1, y2;
 	Path2D.Float drawArrow;
+	Shape finishedArrow;
 	int arrowLength = 5;
 	
 	public DrawArrow(float x1, float x2, float y1, float y2){
@@ -78,5 +80,10 @@ public class DrawArrow {
 		drawArrow.moveTo(x2, y2);
 		drawArrow.lineTo(x4, y4);
 		drawArrow.closePath();
+		this.finishedArrow = drawArrow;
+	}
+	
+	public Shape returnShape(){
+		return this.finishedArrow;
 	}
 }

@@ -6,11 +6,13 @@
  */
 package com.project.OOP2;
 
+import java.awt.Shape;
 import java.awt.geom.Path2D;
 
 public class DrawRhombus {
 	float x1, x2, y1, y2;
 	Path2D.Float drawRhombus;
+	Shape finishedRhombus;
 	
 	public DrawRhombus(float x1, float x2, float y1, float y2){
 		this.x1 = x1;
@@ -28,5 +30,10 @@ public class DrawRhombus {
 		drawRhombus.lineTo(x3, y2);
 		drawRhombus.lineTo(x1, y3);
 		drawRhombus.closePath();
+		this.finishedRhombus = drawRhombus;
+	}
+	
+	public Shape returnShape(){
+		return this.finishedRhombus;
 	}
 }
