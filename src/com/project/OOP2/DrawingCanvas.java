@@ -15,16 +15,10 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 public class DrawingCanvas extends JComponent{
-
-	//Create ArrayList<Shape> to store shapes
-	/*Code taken from: 
-	 * http://www.newthinktank.com/2012/07/java-video-tutorial-49/
-	 */
-	ArrayList<Shape> shapes = new ArrayList<Shape>();
-	/*End of copied code*/
 	
 	//Create ArrayList of shapes with anchor points
 	ArrayList<Object> anchoredShapes = new ArrayList<Object>();
+	
 	//Create ArrayList objects to store text
 	//TO BE IMPLEMENTED LATER
 	//ArrayList<String> textfield = new ArrayList<String>();
@@ -48,13 +42,12 @@ public class DrawingCanvas extends JComponent{
 				
 				//Handle right mouse click for delete
 				if (SwingUtilities.isRightMouseButton(e)){
-					if(shapes.size() > 0){
-						for(int index = 0; index<shapes.size(); index++){
-							if(shapes.get(index) == null){
+					if(anchoredShapes.size() > 0){
+						for(int index = 0; index<anchoredShapes.size(); index++){
+							if(anchoredShapes.get(index) == null){
 								continue;
 							}
-							if(shapes.get(index).getBounds2D().contains(getxDrawStart(), getyDrawStart())){
-								shapes.remove(index);
+							if(((ShapeControl) anchoredShapes.get(index)).returnShape().getBounds2D().contains(getxDrawStart(), getyDrawStart())){
 								anchoredShapes.remove(index);
 								break;
 							}//end if
@@ -68,103 +61,82 @@ public class DrawingCanvas extends JComponent{
 				setxDrawEnd(e.getX());
 				setyDrawEnd(e.getY());
 				
-				/*Code taken from: 
-				 * http://www.newthinktank.com/2012/07/java-video-tutorial-49/
-				 */
-				
-				Shape aShape = null;
-				/*End of copied code*/
-				
-				Object shapeWithAnchor = null;
-				
+				Object aShape = null;
+								
 				//call relevant drawing class.
 				if (NewPage.drawOption == 1){
 					DrawTerminal drawTerminal = new DrawTerminal(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
-					aShape = drawTerminal.returnShape();
-					shapeWithAnchor = drawTerminal;
-				}//end if
+					aShape = drawTerminal;
+					}//end if
 				else if (NewPage.drawOption == 2){
 					DrawArrow drawArrow = new DrawArrow(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
-					aShape = drawArrow.returnShape();
-					shapeWithAnchor = drawArrow;
+					aShape = drawArrow;
 				}//end else if
 				else if (NewPage.drawOption == 3){
 					DrawRectangle drawRectangle = new DrawRectangle(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
-					aShape = drawRectangle.returnShape();
-					shapeWithAnchor = drawRectangle;
+					aShape = drawRectangle;
 				}//end else if
 				else if (NewPage.drawOption == 4){
 					DrawParallelogram drawParallelogram = new DrawParallelogram(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
-					aShape = drawParallelogram.returnShape();
-					shapeWithAnchor = drawParallelogram;
+					aShape = drawParallelogram;
 				}//end else if
 				else if (NewPage.drawOption == 5){
 					DrawRhombus drawRhombus = new DrawRhombus(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
-					aShape = drawRhombus.returnShape();
-					shapeWithAnchor = drawRhombus;
+					aShape = drawRhombus;
 				}//end else if
 				else if (NewPage.drawOption == 0){
-					if(shapes.size() > 0){
-						for(int count = 0; count<shapes.size(); count++){
-							if(shapes.get(count) == null){
+					if(anchoredShapes.size() > 0){
+						for(Object o: anchoredShapes){
+							if(o == null){
 								continue;
 							}//end if
-							if(shapes.get(count).getBounds2D().contains(getxDrawStart(), getyDrawStart())){
+							if(((ShapeControl) o).returnShape().getBounds2D().contains(getxDrawStart(), getyDrawStart())){
 								//Get anchor positions for shape selected
-								double a1Nx = ((ShapeControl) anchoredShapes.get(count)).getAnchorNx();
-								double a1Ny = ((ShapeControl) anchoredShapes.get(count)).getAnchorNy();
-								double a1Sx = ((ShapeControl) anchoredShapes.get(count)).getAnchorSx();
-								double a1Sy = ((ShapeControl) anchoredShapes.get(count)).getAnchorSy();
-								double a1Ex = ((ShapeControl) anchoredShapes.get(count)).getAnchorEx();
-								double a1Ey = ((ShapeControl) anchoredShapes.get(count)).getAnchorEy();
-								double a1Wx = ((ShapeControl) anchoredShapes.get(count)).getAnchorWx();
-								double a1Wy = ((ShapeControl) anchoredShapes.get(count)).getAnchorWy();
+								double a1Nx = ((ShapeControl) o).getAnchorNx();
+								double a1Ny = ((ShapeControl) o).getAnchorNy();
+								double a1Sx = ((ShapeControl) o).getAnchorSx();
+								double a1Sy = ((ShapeControl) o).getAnchorSy();
+								double a1Ex = ((ShapeControl) o).getAnchorEx();
+								double a1Ey = ((ShapeControl) o).getAnchorEy();
+								double a1Wx = ((ShapeControl) o).getAnchorWx();
+								double a1Wy = ((ShapeControl) o).getAnchorWy();
 								
 								//Variables to hold snap difference, set to 0
 								double snapx = 0;
 								double snapy = 0;
+								
+								//Variables to hold location difference
+								double xLocDiff = getxDrawEnd() - getxDrawStart();
+								double yLocDiff = getyDrawEnd() - getyDrawStart();
 								//Move object to new location
 								AffineTransform translateTo = new AffineTransform();
-								translateTo.translate((getxDrawEnd() - getxDrawStart()),(getyDrawEnd() - getyDrawStart()) );
-								shapes.set(count, translateTo.createTransformedShape(shapes.get(count)));
+								translateTo.translate(xLocDiff, yLocDiff );
+								((ShapeControl) o).setShape(translateTo.createTransformedShape(((ShapeControl) o).returnShape()));
 								
-								/*Not working
-								//adjust anchoredShapes shape
-								anchoredShapes.set(count, translateTo.createTransformedShape(
-										((ShapeControl) anchoredShapes.get(count)).returnShape()));
-								//adjust anchoredShapes anchors
-								((ShapeControl) anchoredShapes.get(count)).setAnchorNx(
-										((ShapeControl) anchoredShapes.get(count)).getAnchorNx() + snapx);
-								((ShapeControl) anchoredShapes.get(count)).setAnchorSx(
-										((ShapeControl) anchoredShapes.get(count)).getAnchorSx() + snapx);
-								((ShapeControl) anchoredShapes.get(count)).setAnchorEx(
-										((ShapeControl) anchoredShapes.get(count)).getAnchorEx() + snapx);
-								((ShapeControl) anchoredShapes.get(count)).setAnchorWx(
-										((ShapeControl) anchoredShapes.get(count)).getAnchorWx() + snapx);
-								((ShapeControl) anchoredShapes.get(count)).setAnchorNy(
-										((ShapeControl) anchoredShapes.get(count)).getAnchorNy() + snapy);
-								((ShapeControl) anchoredShapes.get(count)).setAnchorSy(
-										((ShapeControl) anchoredShapes.get(count)).getAnchorSy() + snapy);
-								((ShapeControl) anchoredShapes.get(count)).setAnchorEy(
-										((ShapeControl) anchoredShapes.get(count)).getAnchorEy() + snapy);
-								((ShapeControl) anchoredShapes.get(count)).setAnchorWy(
-										((ShapeControl) anchoredShapes.get(count)).getAnchorWy() + snapy);
-								*/
+								//Adjust anchors
+								((ShapeControl) o).setAnchorNx(((ShapeControl) o).getAnchorNx() + xLocDiff);
+								((ShapeControl) o).setAnchorNy(((ShapeControl) o).getAnchorNy() + yLocDiff);
+								((ShapeControl) o).setAnchorSx(((ShapeControl) o).getAnchorSx() + xLocDiff);
+								((ShapeControl) o).setAnchorSy(((ShapeControl) o).getAnchorSy() + yLocDiff);
+								((ShapeControl) o).setAnchorEx(((ShapeControl) o).getAnchorEx() + xLocDiff);
+								((ShapeControl) o).setAnchorEy(((ShapeControl) o).getAnchorEy() + yLocDiff);
+								((ShapeControl) o).setAnchorWx(((ShapeControl) o).getAnchorWx() + xLocDiff);
+								((ShapeControl) o).setAnchorWy(((ShapeControl) o).getAnchorWy() + yLocDiff);
 								
 								//Check for nearby shapes
-								for(Object o : anchoredShapes){
-									if(o == null){
+								for(Object o2 : anchoredShapes){
+									if(o2 == null){
 										continue;
 									}//end if
 									//Get anchor points for shape
-									double a2Nx = ((ShapeControl) o).getAnchorNx();
-									double a2Ny = ((ShapeControl) o).getAnchorNy();
-									double a2Sx = ((ShapeControl) o).getAnchorSx();
-									double a2Sy = ((ShapeControl) o).getAnchorSy();
-									double a2Ex = ((ShapeControl) o).getAnchorEx();
-									double a2Ey = ((ShapeControl) o).getAnchorEy();
-									double a2Wx = ((ShapeControl) o).getAnchorWx();
-									double a2Wy = ((ShapeControl) o).getAnchorWy();
+									double a2Nx = ((ShapeControl) o2).getAnchorNx();
+									double a2Ny = ((ShapeControl) o2).getAnchorNy();
+									double a2Sx = ((ShapeControl) o2).getAnchorSx();
+									double a2Sy = ((ShapeControl) o2).getAnchorSy();
+									double a2Ex = ((ShapeControl) o2).getAnchorEx();
+									double a2Ey = ((ShapeControl) o2).getAnchorEy();
+									double a2Wx = ((ShapeControl) o2).getAnchorWx();
+									double a2Wy = ((ShapeControl) o2).getAnchorWy();
 									
 									//test if south is near north
 									if((Math.abs(a1Sx - a2Nx) < snapvalue) && (Math.abs(a1Sy - a2Ny) < snapvalue)){
@@ -210,30 +182,17 @@ public class DrawingCanvas extends JComponent{
 								//Move again
 								if(snapx > 0 || snapy > 0){
 									translateTo.translate(snapx, snapy);
-									shapes.set(count, translateTo.createTransformedShape(shapes.get(count)));
+									((ShapeControl) o).setShape(translateTo.createTransformedShape(((ShapeControl) o).returnShape()));
 									
-									/*Not working
-									//adjust anchoredShapes shape
-									anchoredShapes.set(count, translateTo.createTransformedShape(
-											((ShapeControl) anchoredShapes.get(count)).returnShape()));
-									//adjust anchoredShapes anchors
-									((ShapeControl) anchoredShapes.get(count)).setAnchorNx(
-											((ShapeControl) anchoredShapes.get(count)).getAnchorNx() + snapx);
-									((ShapeControl) anchoredShapes.get(count)).setAnchorSx(
-											((ShapeControl) anchoredShapes.get(count)).getAnchorSx() + snapx);
-									((ShapeControl) anchoredShapes.get(count)).setAnchorEx(
-											((ShapeControl) anchoredShapes.get(count)).getAnchorEx() + snapx);
-									((ShapeControl) anchoredShapes.get(count)).setAnchorWx(
-											((ShapeControl) anchoredShapes.get(count)).getAnchorWx() + snapx);
-									((ShapeControl) anchoredShapes.get(count)).setAnchorNy(
-											((ShapeControl) anchoredShapes.get(count)).getAnchorNy() + snapy);
-									((ShapeControl) anchoredShapes.get(count)).setAnchorSy(
-											((ShapeControl) anchoredShapes.get(count)).getAnchorSy() + snapy);
-									((ShapeControl) anchoredShapes.get(count)).setAnchorEy(
-											((ShapeControl) anchoredShapes.get(count)).getAnchorEy() + snapy);
-									((ShapeControl) anchoredShapes.get(count)).setAnchorWy(
-											((ShapeControl) anchoredShapes.get(count)).getAnchorWy() + snapy);
-									*/
+									//Adjust anchors
+									((ShapeControl) o).setAnchorNx(((ShapeControl) o).getAnchorNx() + snapx);
+									((ShapeControl) o).setAnchorNy(((ShapeControl) o).getAnchorNy() + snapy);
+									((ShapeControl) o).setAnchorSx(((ShapeControl) o).getAnchorSx() + snapx);
+									((ShapeControl) o).setAnchorSy(((ShapeControl) o).getAnchorSy() + snapy);
+									((ShapeControl) o).setAnchorEx(((ShapeControl) o).getAnchorEx() + snapx);
+									((ShapeControl) o).setAnchorEy(((ShapeControl) o).getAnchorEy() + snapy);
+									((ShapeControl) o).setAnchorWx(((ShapeControl) o).getAnchorWx() + snapx);
+									((ShapeControl) o).setAnchorWy(((ShapeControl) o).getAnchorWy() + snapy);
 									
 								}//end if
 								
@@ -247,13 +206,7 @@ public class DrawingCanvas extends JComponent{
 				}//end else if
 				
 				//add shapes to arrayList
-				/*Code taken from: 
-				 * http://www.newthinktank.com/2012/07/java-video-tutorial-49/
-				 */
-				shapes.add(aShape);
-				/*End of copied code*/
-				
-				anchoredShapes.add(shapeWithAnchor);
+				anchoredShapes.add(aShape);
 				
 				NewPage.drawOption = 0;
 				repaint();
@@ -288,9 +241,9 @@ public class DrawingCanvas extends JComponent{
 		 * http://www.newthinktank.com/2012/07/java-video-tutorial-49/
 		 */
 		//Draws images onto page
-		for(Shape i: shapes){
+		for(Object i: anchoredShapes){
 			if(i != null){
-				graphicsSettings.draw(i);
+				graphicsSettings.draw(((ShapeControl) i).returnShape());
 			}//end if
 		}//end for
 		/*End of code copied*/
