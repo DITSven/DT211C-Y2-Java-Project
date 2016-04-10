@@ -78,17 +78,20 @@ public class DrawingCanvas extends JComponent{
 					aShape = drawRhombus.returnShape();
 				}//end else if
 				else if (NewPage.drawOption == 0){
-					for(int count = 0; count<shapes.size(); count++){
-						if(shapes.get(count) == null){
-							break;
-						}
-						if(shapes.get(count).getBounds2D().contains(getxDrawStart(), getyDrawStart())){
-							AffineTransform translateTo = new AffineTransform();
-							translateTo.translate((getxDrawEnd() - getxDrawStart()),(getyDrawEnd() - getyDrawStart()) );
-							shapes.set(count, translateTo.createTransformedShape(shapes.get(count)));
-							break;
-						}//end if
-					}//end for
+					if(shapes.size() > 0){
+						for(int count = 0; count<shapes.size(); count++){
+							if(shapes.get(count) == null){
+								continue;
+							}
+							if(shapes.get(count).getBounds2D().contains(getxDrawStart(), getyDrawStart())){
+								AffineTransform translateTo = new AffineTransform();
+								translateTo.translate((getxDrawEnd() - getxDrawStart()),(getyDrawEnd() - getyDrawStart()) );
+								shapes.set(count, translateTo.createTransformedShape(shapes.get(count)));
+								break;
+							}//end if
+						
+						}//end for
+					}//end if
 
 					
 				}//end else if
