@@ -1,7 +1,7 @@
 /*
  * Author: C14752305 
  * Class: DrawArrow
- * Date: 9/04/2016
+ * Date: 10/04/2016
  * Handles how arrows are drawn.
  */
 package com.project.OOP2;
@@ -14,6 +14,11 @@ public class DrawArrow {
 	double x1, x2, y1, y2;
 	Path2D.Float drawArrow;
 	Shape finishedArrow;
+	private double anchor1x;
+	private double anchor1y;
+	private double anchor2x;
+	private double anchor2y;
+	
 		
 	public DrawArrow(float x1, float x2, float y1, float y2){
 		this.x1 = x1;
@@ -96,10 +101,47 @@ public class DrawArrow {
 		drawArrow.lineTo(end2.getX(), end2.getY());
 		drawArrow.closePath();
 		this.finishedArrow = drawArrow;
+		
+		this.setAnchor1x(x1);
+		this.setAnchor1y(y1);
+		this.setAnchor2x(x2);
+		this.setAnchor2y(y2);
         
 	}
 	
 	public Shape returnShape(){
 		return this.finishedArrow;
+	}
+
+	public double getAnchor1x() {
+		return anchor1x;
+	}
+
+	public void setAnchor1x(double anchor1x) {
+		this.anchor1x = anchor1x;
+	}
+
+	public double getAnchor1y() {
+		return anchor1y;
+	}
+
+	public void setAnchor1y(double anchor1y) {
+		this.anchor1y = anchor1y;
+	}
+
+	public double getAnchor2x() {
+		return anchor2x;
+	}
+
+	public void setAnchor2x(double anchor2x) {
+		this.anchor2x = anchor2x;
+	}
+
+	public double getAnchor2y() {
+		return anchor2y;
+	}
+
+	public void setAnchor2y(double anchor2y) {
+		this.anchor2y = anchor2y;
 	}
 }

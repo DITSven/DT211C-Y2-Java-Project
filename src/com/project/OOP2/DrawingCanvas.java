@@ -9,20 +9,22 @@ package com.project.OOP2;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
 import java.awt.Component.*;
 import java.util.*;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 public class DrawingCanvas extends JComponent{
 
-	//Create ArrayList objects to store shapes
+	//Create ArrayList<Shape> to store shapes
 	/*Code taken from: 
 	 * http://www.newthinktank.com/2012/07/java-video-tutorial-49/
 	 */
 	ArrayList<Shape> shapes = new ArrayList<Shape>();
 	/*End of copied code*/
 	
+	//Create ArrayList of shapes with anchor points
+	ArrayList<Object> anchoredShapes = new ArrayList<Object>();
 	//Create ArrayList objects to store text
 	//TO BE IMPLEMENTED LATER
 	//ArrayList<String> textfield = new ArrayList<String>();
@@ -43,6 +45,22 @@ public class DrawingCanvas extends JComponent{
 				setxDrawStart(e.getX());
 				setyDrawStart(e.getY());
 				
+				//Handle right mouse click for delete
+				if (SwingUtilities.isRightMouseButton(e)){
+					if(shapes.size() > 0){
+						for(int index = 0; index<shapes.size(); index++){
+							if(shapes.get(index) == null){
+								continue;
+							}
+							if(shapes.get(index).getBounds2D().contains(getxDrawStart(), getyDrawStart())){
+								shapes.remove(index);
+								anchoredShapes.remove(index);
+								break;
+							}//end if
+						
+						}//end for
+					}//end if
+				}
 			}//end mousePressed
 			
 			public void mouseReleased(MouseEvent e){
@@ -56,26 +74,33 @@ public class DrawingCanvas extends JComponent{
 				Shape aShape = null;
 				/*End of copied code*/
 				
+				Object shapeWithAnchor = null;
+				
 				//call relevant drawing class.
 				if (NewPage.drawOption == 1){
 					DrawTerminal drawTerminal = new DrawTerminal(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
 					aShape = drawTerminal.returnShape();
+					shapeWithAnchor = drawTerminal;
 				}//end if
 				else if (NewPage.drawOption == 2){
 					DrawArrow drawArrow = new DrawArrow(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
 					aShape = drawArrow.returnShape();
+					shapeWithAnchor = drawArrow;
 				}//end else if
 				else if (NewPage.drawOption == 3){
 					DrawRectangle drawRectangle = new DrawRectangle(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
 					aShape = drawRectangle.returnShape();
+					shapeWithAnchor = drawRectangle;
 				}//end else if
 				else if (NewPage.drawOption == 4){
 					DrawParallelogram drawParallelogram = new DrawParallelogram(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
 					aShape = drawParallelogram.returnShape();
+					shapeWithAnchor = drawParallelogram;
 				}//end else if
 				else if (NewPage.drawOption == 5){
 					DrawRhombus drawRhombus = new DrawRhombus(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
 					aShape = drawRhombus.returnShape();
+					shapeWithAnchor = drawRhombus;
 				}//end else if
 				else if (NewPage.drawOption == 0){
 					if(shapes.size() > 0){
@@ -102,6 +127,9 @@ public class DrawingCanvas extends JComponent{
 				 */
 				shapes.add(aShape);
 				/*End of copied code*/
+				
+				anchoredShapes.add(shapeWithAnchor);
+				
 				NewPage.drawOption = 0;
 				repaint();
 				
