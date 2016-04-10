@@ -10,16 +10,22 @@ import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
-public class DrawArrow {
+public class DrawArrow extends ShapeControl {
 	double x1, x2, y1, y2;
 	Path2D.Float drawArrow;
 	Shape finishedArrow;
-	private double anchor1x;
-	private double anchor1y;
-	private double anchor2x;
-	private double anchor2y;
 	
-		
+	//Create anchor points
+	private double anchorNx;
+	private double anchorNy;
+	private double anchorSx;
+	private double anchorSy;
+	private double anchorEx;
+	private double anchorEy;
+	private double anchorWx;
+	private double anchorWy;
+	
+	
 	public DrawArrow(float x1, float x2, float y1, float y2){
 		this.x1 = x1;
 		this.x2 = x2;
@@ -102,46 +108,115 @@ public class DrawArrow {
 		drawArrow.closePath();
 		this.finishedArrow = drawArrow;
 		
-		this.setAnchor1x(x1);
-		this.setAnchor1y(y1);
-		this.setAnchor2x(x2);
-		this.setAnchor2y(y2);
-        
-	}
+        //Get anchor positions
+		if(y1 > y2){
+			this.setAnchorNy(y1);
+			this.setAnchorSy(y2);
+			this.setAnchorNx(x1);
+			this.setAnchorSx(x2);
+			if(x1 > x2){
+				this.setAnchorEx(x1);
+				this.setAnchorWx(x2);
+				this.setAnchorEy(y1);
+				this.setAnchorWy(y2);
+			}//end if
+			else{
+				this.setAnchorEx(x2);
+				this.setAnchorWx(x1);
+				this.setAnchorEy(y2);
+				this.setAnchorWy(y1);
+			}//end else
+		}//end if
+		else{
+			this.setAnchorNy(y2);
+			this.setAnchorSy(y1);
+			this.setAnchorNx(x2);
+			this.setAnchorSx(x1);
+			if(x1 > x2){
+				this.setAnchorEx(x1);
+				this.setAnchorWx(x2);
+				this.setAnchorEy(y1);
+				this.setAnchorWy(y2);
+			}//end if
+			else{
+				this.setAnchorEx(x2);
+				this.setAnchorWx(x1);
+				this.setAnchorEy(y2);
+				this.setAnchorWy(y1);
+			}//end else	
+		}//end else
+	}//end DrawArrow()
 	
 	public Shape returnShape(){
 		return this.finishedArrow;
 	}
-
-	public double getAnchor1x() {
-		return anchor1x;
+	
+	public void setShape(Shape finishedParallelogram){
+		this.finishedArrow = finishedArrow;
 	}
 
-	public void setAnchor1x(double anchor1x) {
-		this.anchor1x = anchor1x;
+	public double getAnchorNx() {
+		return anchorNx;
 	}
 
-	public double getAnchor1y() {
-		return anchor1y;
+	public void setAnchorNx(double anchorNx) {
+		this.anchorNx = anchorNx;
 	}
 
-	public void setAnchor1y(double anchor1y) {
-		this.anchor1y = anchor1y;
+	public double getAnchorNy() {
+		return anchorNy;
 	}
 
-	public double getAnchor2x() {
-		return anchor2x;
+	public void setAnchorNy(double anchorNy) {
+		this.anchorNy = anchorNy;
 	}
 
-	public void setAnchor2x(double anchor2x) {
-		this.anchor2x = anchor2x;
+	public double getAnchorSx() {
+		return anchorSx;
 	}
 
-	public double getAnchor2y() {
-		return anchor2y;
+	public void setAnchorSx(double anchorSx) {
+		this.anchorSx = anchorSx;
 	}
 
-	public void setAnchor2y(double anchor2y) {
-		this.anchor2y = anchor2y;
+	public double getAnchorSy() {
+		return anchorSy;
 	}
+
+	public void setAnchorSy(double anchorSy) {
+		this.anchorSy = anchorSy;
+	}
+
+	public double getAnchorEx() {
+		return anchorEx;
+	}
+
+	public void setAnchorEx(double anchorEx) {
+		this.anchorEx = anchorEx;
+	}
+
+	public double getAnchorEy() {
+		return anchorEy;
+	}
+
+	public void setAnchorEy(double anchorEy) {
+		this.anchorEy = anchorEy;
+	}
+
+	public double getAnchorWx() {
+		return anchorWx;
+	}
+
+	public void setAnchorWx(double anchorWx) {
+		this.anchorWx = anchorWx;
+	}
+
+	public double getAnchorWy() {
+		return anchorWy;
+	}
+
+	public void setAnchorWy(double anchorWy) {
+		this.anchorWy = anchorWy;
+	}
+	
 }

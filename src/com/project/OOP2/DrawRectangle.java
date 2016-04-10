@@ -9,15 +9,18 @@ package com.project.OOP2;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
-public class DrawRectangle {
+public class DrawRectangle extends ShapeControl {
 	float x1, x2, y1, y2;
 	Shape drawRectangle;
-	private double anchor1x;
-	private double anchor1y;
-	private double anchor2x;
-	private double anchor2y;
-	private double anchorw;
-	private double anchorh;
+	//Create anchors for snapping
+	private double anchorNx;
+	private double anchorNy;
+	private double anchorSx;
+	private double anchorSy;
+	private double anchorEx;
+	private double anchorEy;
+	private double anchorWx;
+	private double anchorWy;
 	
 	public DrawRectangle(float x1, float x2, float y1, float y2){
 		this.x1 = x1;
@@ -32,64 +35,99 @@ public class DrawRectangle {
 		float height = Math.abs(y2 - y1);
 		this.drawRectangle = new Rectangle2D.Float(xPosition, yPosition, width, height);
 		
-		this.setAnchor1x(x1);
-		this.setAnchor2x(x2);
-		this.setAnchor1y(y1);
-		this.setAnchor2y(y2);
-		this.setAnchorh((y1 + y2) /2);
-		this.setAnchorw((x1 + x2) /2);
+		//Get anchor positions
+		this.setAnchorNx((x1 + x2)/2);
+		this.setAnchorSx((x1 + x2)/2);
+		this.setAnchorEy((y1 + y2)/2);
+		this.setAnchorWy((y1 + y2)/2);
+		if(y1 > y2){
+			this.setAnchorNy(y1);
+			this.setAnchorSy(y2);
+		}//end if
+		else{
+			this.setAnchorNy(y2);
+			this.setAnchorSy(y1);
+		}//end else
+		if(x1 > x2){
+			this.setAnchorEx(x1);
+			this.setAnchorWx(x2);
+		}//end if
+		else{
+			this.setAnchorEx(x2);
+			this.setAnchorWx(x1);
+		}//end else
 	}
 	
 	public Shape returnShape(){
 		return this.drawRectangle;
 	}
-
-	public double getAnchor1x() {
-		return anchor1x;
+	
+	public void setShape(Shape drawRectangle){
+		this.drawRectangle = drawRectangle;
 	}
 
-	public void setAnchor1x(double anchor1x) {
-		this.anchor1x = anchor1x;
+	public double getAnchorNx() {
+		return anchorNx;
 	}
 
-	public double getAnchor1y() {
-		return anchor1y;
+	public void setAnchorNx(double anchorNx) {
+		this.anchorNx = anchorNx;
 	}
 
-	public void setAnchor1y(double anchor1y) {
-		this.anchor1y = anchor1y;
+	public double getAnchorNy() {
+		return anchorNy;
 	}
 
-	public double getAnchor2x() {
-		return anchor2x;
+	public void setAnchorNy(double anchorNy) {
+		this.anchorNy = anchorNy;
 	}
 
-	public void setAnchor2x(double anchor2x) {
-		this.anchor2x = anchor2x;
+	public double getAnchorSx() {
+		return anchorSx;
 	}
 
-	public double getAnchor2y() {
-		return anchor2y;
+	public void setAnchorSx(double anchorSx) {
+		this.anchorSx = anchorSx;
 	}
 
-	public void setAnchor2y(double anchor2y) {
-		this.anchor2y = anchor2y;
+	public double getAnchorSy() {
+		return anchorSy;
 	}
 
-	public double getAnchorw() {
-		return anchorw;
+	public void setAnchorSy(double anchorSy) {
+		this.anchorSy = anchorSy;
 	}
 
-	public void setAnchorw(double anchorw) {
-		this.anchorw = anchorw;
+	public double getAnchorEx() {
+		return anchorEx;
 	}
 
-	public double getAnchorh() {
-		return anchorh;
+	public void setAnchorEx(double anchorEx) {
+		this.anchorEx = anchorEx;
 	}
 
-	public void setAnchorh(double anchorh) {
-		this.anchorh = anchorh;
+	public double getAnchorEy() {
+		return anchorEy;
+	}
+
+	public void setAnchorEy(double anchorEy) {
+		this.anchorEy = anchorEy;
+	}
+
+	public double getAnchorWx() {
+		return anchorWx;
+	}
+
+	public void setAnchorWx(double anchorWx) {
+		this.anchorWx = anchorWx;
+	}
+
+	public double getAnchorWy() {
+		return anchorWy;
+	}
+
+	public void setAnchorWy(double anchorWy) {
+		this.anchorWy = anchorWy;
 	}
 	
 }

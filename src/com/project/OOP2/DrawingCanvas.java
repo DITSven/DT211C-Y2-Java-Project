@@ -33,6 +33,7 @@ public class DrawingCanvas extends JComponent{
 	private int yDrawStart;
 	private int xDrawEnd;
 	private int yDrawEnd;
+	final int snapvalue = 11;
 	Graphics2D graphicsSettings;
 
 	//Constructor for monitoring events.
@@ -107,11 +108,135 @@ public class DrawingCanvas extends JComponent{
 						for(int count = 0; count<shapes.size(); count++){
 							if(shapes.get(count) == null){
 								continue;
-							}
+							}//end if
 							if(shapes.get(count).getBounds2D().contains(getxDrawStart(), getyDrawStart())){
+								//Get anchor positions for shape selected
+								double a1Nx = ((ShapeControl) anchoredShapes.get(count)).getAnchorNx();
+								double a1Ny = ((ShapeControl) anchoredShapes.get(count)).getAnchorNy();
+								double a1Sx = ((ShapeControl) anchoredShapes.get(count)).getAnchorSx();
+								double a1Sy = ((ShapeControl) anchoredShapes.get(count)).getAnchorSy();
+								double a1Ex = ((ShapeControl) anchoredShapes.get(count)).getAnchorEx();
+								double a1Ey = ((ShapeControl) anchoredShapes.get(count)).getAnchorEy();
+								double a1Wx = ((ShapeControl) anchoredShapes.get(count)).getAnchorWx();
+								double a1Wy = ((ShapeControl) anchoredShapes.get(count)).getAnchorWy();
+								
+								//Variables to hold snap difference, set to 0
+								double snapx = 0;
+								double snapy = 0;
+								//Move object to new location
 								AffineTransform translateTo = new AffineTransform();
 								translateTo.translate((getxDrawEnd() - getxDrawStart()),(getyDrawEnd() - getyDrawStart()) );
 								shapes.set(count, translateTo.createTransformedShape(shapes.get(count)));
+								
+								/*Not working
+								//adjust anchoredShapes shape
+								anchoredShapes.set(count, translateTo.createTransformedShape(
+										((ShapeControl) anchoredShapes.get(count)).returnShape()));
+								//adjust anchoredShapes anchors
+								((ShapeControl) anchoredShapes.get(count)).setAnchorNx(
+										((ShapeControl) anchoredShapes.get(count)).getAnchorNx() + snapx);
+								((ShapeControl) anchoredShapes.get(count)).setAnchorSx(
+										((ShapeControl) anchoredShapes.get(count)).getAnchorSx() + snapx);
+								((ShapeControl) anchoredShapes.get(count)).setAnchorEx(
+										((ShapeControl) anchoredShapes.get(count)).getAnchorEx() + snapx);
+								((ShapeControl) anchoredShapes.get(count)).setAnchorWx(
+										((ShapeControl) anchoredShapes.get(count)).getAnchorWx() + snapx);
+								((ShapeControl) anchoredShapes.get(count)).setAnchorNy(
+										((ShapeControl) anchoredShapes.get(count)).getAnchorNy() + snapy);
+								((ShapeControl) anchoredShapes.get(count)).setAnchorSy(
+										((ShapeControl) anchoredShapes.get(count)).getAnchorSy() + snapy);
+								((ShapeControl) anchoredShapes.get(count)).setAnchorEy(
+										((ShapeControl) anchoredShapes.get(count)).getAnchorEy() + snapy);
+								((ShapeControl) anchoredShapes.get(count)).setAnchorWy(
+										((ShapeControl) anchoredShapes.get(count)).getAnchorWy() + snapy);
+								*/
+								
+								//Check for nearby shapes
+								for(Object o : anchoredShapes){
+									if(o == null){
+										continue;
+									}//end if
+									//Get anchor points for shape
+									double a2Nx = ((ShapeControl) o).getAnchorNx();
+									double a2Ny = ((ShapeControl) o).getAnchorNy();
+									double a2Sx = ((ShapeControl) o).getAnchorSx();
+									double a2Sy = ((ShapeControl) o).getAnchorSy();
+									double a2Ex = ((ShapeControl) o).getAnchorEx();
+									double a2Ey = ((ShapeControl) o).getAnchorEy();
+									double a2Wx = ((ShapeControl) o).getAnchorWx();
+									double a2Wy = ((ShapeControl) o).getAnchorWy();
+									
+									//test if south is near north
+									if((Math.abs(a1Sx - a2Nx) < snapvalue) && (Math.abs(a1Sy - a2Ny) < snapvalue)){
+										snapy = a1Sy - a2Ny;
+										if(a1Sx > a2Nx)
+											snapx = a1Sx - a2Nx;
+										else
+											snapx = a2Nx - a1Sx;
+										break;
+									}//end if
+									//test if north is near south
+									else if((Math.abs(a1Nx - a2Sx) < snapvalue) && (Math.abs(a1Ny - a2Sy) < snapvalue)){
+										snapy = a2Sy - a1Ny;
+										if(a1Sx > a2Nx)
+											snapx = a1Sx - a2Nx;
+										else
+											snapx = a2Nx - a1Sx;
+										break;
+									}//end else if
+									//test if east is near west
+									else if((Math.abs(a1Ex - a2Wx) < snapvalue) && (Math.abs(a1Ey - a2Wy) < snapvalue)){
+										snapx = a2Wx - a1Ex;
+										if(a1Ey > a2Wy)
+											snapy = a1Ey - a2Wy;
+										else
+											snapy = a2Wy - a1Ey;
+										break;
+									}//end else if
+									//test if west is near east
+									else if((Math.abs(a1Wx - a2Ex) < snapvalue) && (Math.abs(a1Wy - a2Ey) < snapvalue)){
+										snapx = a1Wx - a2Ex;
+										if(a1Wy > a2Ey)
+											snapy = a1Wy - a2Ey;
+										else
+											snapy = a2Ey - a1Wy;
+										break;
+									}//end else if
+									else{
+										continue;
+									}
+								}//end for
+								
+								//Move again
+								if(snapx > 0 || snapy > 0){
+									translateTo.translate(snapx, snapy);
+									shapes.set(count, translateTo.createTransformedShape(shapes.get(count)));
+									
+									/*Not working
+									//adjust anchoredShapes shape
+									anchoredShapes.set(count, translateTo.createTransformedShape(
+											((ShapeControl) anchoredShapes.get(count)).returnShape()));
+									//adjust anchoredShapes anchors
+									((ShapeControl) anchoredShapes.get(count)).setAnchorNx(
+											((ShapeControl) anchoredShapes.get(count)).getAnchorNx() + snapx);
+									((ShapeControl) anchoredShapes.get(count)).setAnchorSx(
+											((ShapeControl) anchoredShapes.get(count)).getAnchorSx() + snapx);
+									((ShapeControl) anchoredShapes.get(count)).setAnchorEx(
+											((ShapeControl) anchoredShapes.get(count)).getAnchorEx() + snapx);
+									((ShapeControl) anchoredShapes.get(count)).setAnchorWx(
+											((ShapeControl) anchoredShapes.get(count)).getAnchorWx() + snapx);
+									((ShapeControl) anchoredShapes.get(count)).setAnchorNy(
+											((ShapeControl) anchoredShapes.get(count)).getAnchorNy() + snapy);
+									((ShapeControl) anchoredShapes.get(count)).setAnchorSy(
+											((ShapeControl) anchoredShapes.get(count)).getAnchorSy() + snapy);
+									((ShapeControl) anchoredShapes.get(count)).setAnchorEy(
+											((ShapeControl) anchoredShapes.get(count)).getAnchorEy() + snapy);
+									((ShapeControl) anchoredShapes.get(count)).setAnchorWy(
+											((ShapeControl) anchoredShapes.get(count)).getAnchorWy() + snapy);
+									*/
+									
+								}//end if
+								
 								break;
 							}//end if
 						
@@ -157,8 +282,7 @@ public class DrawingCanvas extends JComponent{
 
 		//Set the line color
 		graphicsSettings.setColor(Color.BLACK);
-		graphicsSettings.setBackground(Color.WHITE);
-		
+			
 		
 		/*Code taken from: 
 		 * http://www.newthinktank.com/2012/07/java-video-tutorial-49/

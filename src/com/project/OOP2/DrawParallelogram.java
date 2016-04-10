@@ -9,16 +9,20 @@ package com.project.OOP2;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
 
-public class DrawParallelogram {
+public class DrawParallelogram extends ShapeControl {
 	float x1, x2, y1, y2;
 	Path2D.Float drawParallelogram;
 	Shape finishedParallelogram;
-	private double anchor1x;
-	private double anchor2x;
-	private double anchor1y;
-	private double anchor2y;
-	private double anchorh;
-	private double anchorw;
+	
+	//Create anchors for snapping
+	private double anchorNx;
+	private double anchorNy;
+	private double anchorSx;
+	private double anchorSy;
+	private double anchorEx;
+	private double anchorEy;
+	private double anchorWx;
+	private double anchorWy;
 	
 	public DrawParallelogram(float x1, float x2, float y1, float y2){
 		this.x1 = x1;
@@ -30,9 +34,11 @@ public class DrawParallelogram {
 		float xb = Math.max(x1, x2);
 		float ya = Math.min(y1, y2);
 		float yb = Math.max(y1, y2);
+		//Set x difference
+		final float xDiff = 20;
 		//Set adjusted positions
-		float xc = xa - 20;
-		float xd = xb - 20;
+		float xc = xa - xDiff;
+		float xd = xb - xDiff;
 				
 		//Draw parallelogram
 		this.drawParallelogram = new Path2D.Float();
@@ -44,63 +50,99 @@ public class DrawParallelogram {
 		drawParallelogram.closePath();
 		this.finishedParallelogram = drawParallelogram;
 		
-		this.setAnchor1x(x1);
-		this.setAnchor2x(x2);
-		this.setAnchor1y(y1);
-		this.setAnchor2y(y2);
-		this.setAnchorh((y1 + y2)/2);
-		this.setAnchorw((x1 + x2)/2);
+				
+		//Get anchor positions
+		this.setAnchorNx((x1 + x2)/2);
+		this.setAnchorSx((x1 + x2)/2);
+		this.setAnchorEy((y1 + y2)/2);
+		this.setAnchorWy((y1 + y2)/2);
+		if(y1 > y2){
+			this.setAnchorNy(y1);
+			this.setAnchorSy(y2);
+		}//end if
+		else{
+			this.setAnchorNy(y2);
+			this.setAnchorSy(y1);
+		}//end else
+		if(x1 > x2){
+			this.setAnchorEx(x1 - (xDiff/2));
+			this.setAnchorWx(x2 - (xDiff/2));
+		}//end if
+		else{
+			this.setAnchorEx(x2 - (xDiff/2));
+			this.setAnchorWx(x1 - (xDiff/2));
+		}//end else
 	}
 	
 	public Shape returnShape(){
 		return this.finishedParallelogram;
 	}
-
-	public double getAnchor1x() {
-		return anchor1x;
+	
+	public void setShape(Shape finishedParallelogram){
+		this.finishedParallelogram = finishedParallelogram;
 	}
 
-	public void setAnchor1x(double anchor1x) {
-		this.anchor1x = anchor1x;
+	public double getAnchorNx() {
+		return anchorNx;
 	}
 
-	public double getAnchor2x() {
-		return anchor2x;
+	public void setAnchorNx(double anchorNx) {
+		this.anchorNx = anchorNx;
 	}
 
-	public void setAnchor2x(double anchor2x) {
-		this.anchor2x = anchor2x;
+	public double getAnchorNy() {
+		return anchorNy;
 	}
 
-	public double getAnchor1y() {
-		return anchor1y;
+	public void setAnchorNy(double anchorNy) {
+		this.anchorNy = anchorNy;
 	}
 
-	public void setAnchor1y(double anchor1y) {
-		this.anchor1y = anchor1y;
+	public double getAnchorSx() {
+		return anchorSx;
 	}
 
-	public double getAnchor2y() {
-		return anchor2y;
+	public void setAnchorSx(double anchorSx) {
+		this.anchorSx = anchorSx;
 	}
 
-	public void setAnchor2y(double anchor2y) {
-		this.anchor2y = anchor2y;
+	public double getAnchorSy() {
+		return anchorSy;
 	}
 
-	public double getAnchorh() {
-		return anchorh;
+	public void setAnchorSy(double anchorSy) {
+		this.anchorSy = anchorSy;
 	}
 
-	public void setAnchorh(double anchorh) {
-		this.anchorh = anchorh;
+	public double getAnchorEx() {
+		return anchorEx;
 	}
 
-	public double getAnchorw() {
-		return anchorw;
+	public void setAnchorEx(double anchorEx) {
+		this.anchorEx = anchorEx;
 	}
 
-	public void setAnchorw(double anchorw) {
-		this.anchorw = anchorw;
+	public double getAnchorEy() {
+		return anchorEy;
+	}
+
+	public void setAnchorEy(double anchorEy) {
+		this.anchorEy = anchorEy;
+	}
+
+	public double getAnchorWx() {
+		return anchorWx;
+	}
+
+	public void setAnchorWx(double anchorWx) {
+		this.anchorWx = anchorWx;
+	}
+
+	public double getAnchorWy() {
+		return anchorWy;
+	}
+
+	public void setAnchorWy(double anchorWy) {
+		this.anchorWy = anchorWy;
 	}
 }
