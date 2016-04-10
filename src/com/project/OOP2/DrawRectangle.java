@@ -1,7 +1,7 @@
 /*
  * Author: C14752305 
  * Class: DrawRectangle
- * Date: 7/04/2016
+ * Date: 8/04/2016
  * Handles how rectangles are drawn.
  */
 package com.project.OOP2;

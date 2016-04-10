@@ -1,7 +1,7 @@
 /*
  * Author: C14752305 
  * Class: NewPage
- * Date: 
+ * Date: 09/04/2016
  * Handles how the page is generated.
  */
 package com.project.OOP2;
@@ -27,7 +27,7 @@ public class NewPage extends JFrame implements ActionListener {
 	
 	//Set variable to control which option is selected for
 	//different drawing tasks.
-	static int drawOption;
+	static int drawOption = 0;
 	//NewPage constructor
 	public NewPage(String pageTitle){
 		super(pageTitle);
@@ -98,6 +98,7 @@ public class NewPage extends JFrame implements ActionListener {
 		
 		//Add canvas to editorPanel
 		editorPanel.setLayout(new GridLayout(1,1));
+		editorPanel.setBackground(white);
 		DrawingCanvas newPageCanvas = new DrawingCanvas();
 		editorPanel.add(newPageCanvas);
 		 

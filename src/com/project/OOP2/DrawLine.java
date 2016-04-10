@@ -2,7 +2,7 @@
  * Author: C14752305 
  * Class: DrawLine
  * Date: 7/04/2016
- * Handles how lines are drawn.
+ * Redundant class to be deleted.
  */
 package com.project.OOP2;
 

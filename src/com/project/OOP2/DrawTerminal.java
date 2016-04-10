@@ -1,7 +1,7 @@
 /*
  * Author: C14752305 
  * Class: DrawTerminal
- * Date: 7/04/2016
+ * Date: 8/04/2016
  * Handles how terminal boxes (rounded rectangles)
  *  are drawn.
  */
