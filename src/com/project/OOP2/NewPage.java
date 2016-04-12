@@ -23,22 +23,34 @@ import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class NewPage extends JFrame implements ActionListener {	
+	//Create GUI elements
 	JPanel sidePanel, editorPanel;
-	DrawingCanvas newPageCanvas;
 	JScrollPane scrollPane;
 	JLabel newPageLabel;
 	MenuBar newPageMenuBar;
 	ImageIcon arrowIcon, terminalIcon, rectangleIcon, rhombusIcon, parallelogramIcon, textIcon;
 	JButton arrowButton, terminalButton, rectangleButton, rhombusButton, parallelogramButton, textButton;
 	Menu newPageFile, newPageEdit, newPageHelp;
-	MenuItem newPageNew, newPageOpen, newPageSave, newPageUndo, newPageAbout;
+	MenuItem newPageNew, newPageOpen, newPageSave, newPageUndo, newPageRedo, newPageAbout;
 	JFileChooser fileChoice;
+	
+	//Color variable to store white (255,255,255)
 	Color white;
+	
+	//Create object for drawing
+	DrawingCanvas newPageCanvas;
+	
+	//Create ArrayLists to store undo/redo state
+	private ArrayList<Object> undoArray = new ArrayList<Object>();
+	private ArrayList<Object> redoArray = new ArrayList<Object>();
+	
+	//Variables to store canvas size
 	private int xMax;
 	private int yMax;
 	//Set variable to control which option is selected for
 	//different drawing tasks.
 	static int drawOption = 0;
+		
 	//NewPage constructor
 	public NewPage(String pageTitle){
 		super(pageTitle);
@@ -64,6 +76,7 @@ public class NewPage extends JFrame implements ActionListener {
 		newPageOpen = new MenuItem("Open");
 		newPageSave = new MenuItem("Save");
 		newPageUndo = new MenuItem("Undo");
+		newPageRedo = new MenuItem("Redo");
 		newPageAbout = new MenuItem("About");
 		//Add Menus
 		newPageMenuBar.add(newPageFile);
@@ -74,6 +87,7 @@ public class NewPage extends JFrame implements ActionListener {
 		newPageFile.add(newPageOpen);
 		newPageFile.add(newPageSave);
 		newPageEdit.add(newPageUndo);
+		newPageEdit.add(newPageRedo);
 		newPageHelp.add(newPageAbout);
 		//Add to page
 		setMenuBar(newPageMenuBar);
@@ -164,6 +178,8 @@ public class NewPage extends JFrame implements ActionListener {
 				newPageCanvas.repaint();
 			}//end if
 		}
+		//Open and Save based on tutorial at:
+		//https://www.youtube.com/watch?v=Sm9yoju1me0
 		if(source == newPageOpen){
 			int fileChoiceOption = fileChoice.showOpenDialog(NewPage.this);
 			if(fileChoiceOption == JFileChooser.APPROVE_OPTION){
@@ -171,7 +187,9 @@ public class NewPage extends JFrame implements ActionListener {
 				try(FileInputStream fileInput = new FileInputStream(file)){
 					ObjectInputStream objectFileInput = new ObjectInputStream(fileInput);
 					newPageCanvas.setAnchoredShapes((ArrayList<Object>)objectFileInput.readObject());
+					
 					newPageCanvas.repaint();
+					
 					objectFileInput.close();
 					
 				} catch (FileNotFoundException e1) {
@@ -199,6 +217,7 @@ public class NewPage extends JFrame implements ActionListener {
 					objectFileOutput.writeObject(newPageCanvas.getAnchoredShapes());
 					
 					objectFileOutput.close();
+					
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -212,7 +231,76 @@ public class NewPage extends JFrame implements ActionListener {
 			}//end else
 		}
 		if(source == newPageUndo){
-			JOptionPane.showMessageDialog(this, "Placeholder");
+			//Set undoArray
+			setUndoArray(new ArrayList<Object>());
+			getUndoArray().trimToSize();
+			for(Object u: newPageCanvas.getUndoState()){
+				if(u == null)
+					continue;
+				else
+					getUndoArray().add(u);				
+			}//end for
+			
+			//Set redo state
+			newPageCanvas.setRedoState(new ArrayList<Object>());
+			newPageCanvas.getRedoState().trimToSize();
+			for(Object r: newPageCanvas.getAnchoredShapes()){
+				if(r == null)
+					continue;
+				else
+					newPageCanvas.getRedoState().add(r);
+			}//end for
+			
+			//Set canvas array to previous state
+			newPageCanvas.setAnchoredShapes(new ArrayList<Object>());
+			newPageCanvas.getAnchoredShapes().trimToSize();
+			for(Object o: getUndoArray()){
+				if (o == null)
+					continue;
+				else
+					newPageCanvas.getAnchoredShapes().add(o);
+			}//end for
+			
+			newPageCanvas.repaint();
+		}
+		if(source == newPageRedo){
+			if(newPageCanvas.getRedoState().isEmpty()){
+				
+			}//end if
+			else{
+				//Set redoArray
+				setRedoArray(new ArrayList<Object>());
+				getRedoArray().trimToSize();
+				for(Object r: newPageCanvas.getRedoState()){
+					if(r == null)
+						continue;
+					else
+						getRedoArray().add(r);
+				}//end for
+			}//end else	
+				//Set undoArray
+				newPageCanvas.setUndoState(new ArrayList<Object>());
+				for(Object u: newPageCanvas.getAnchoredShapes()){
+					if(u == null)
+						continue;
+					else
+						newPageCanvas.getUndoState().add(u);
+				}//end for
+				
+				//Set canvas ArrayList
+				newPageCanvas.setAnchoredShapes(new ArrayList<Object>());
+				for(Object o: getRedoArray()){
+					if(o == null)
+						continue;
+					else
+						newPageCanvas.getAnchoredShapes().add(o);
+				}//end for
+				
+				//Clear Redo
+				newPageCanvas.setRedoState(new ArrayList<Object>());
+				
+				newPageCanvas.repaint();
+			
 		}
 		if(source == newPageAbout){
 			JOptionPane.showMessageDialog(this, "Created by Eoin Mulvey(C14752305)\nDT211C/2\n2016", "About", JOptionPane.PLAIN_MESSAGE);
@@ -237,6 +325,23 @@ public class NewPage extends JFrame implements ActionListener {
 		}
 	}//end actionPerformed()
 
+	//Getters & setters
+	public ArrayList<Object> getUndoArray() {
+		return undoArray;
+	}
+
+	public void setUndoArray(ArrayList<Object> undoArray) {
+		this.undoArray = undoArray;
+	}
+	
+	public ArrayList<Object> getRedoArray() {
+		return redoArray;
+	}
+
+	public void setRedoArray(ArrayList<Object> redoArray) {
+		this.redoArray = redoArray;
+	}
+	
 	public int getxMax() {
 		return xMax;
 	}

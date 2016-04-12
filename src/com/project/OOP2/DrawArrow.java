@@ -152,7 +152,7 @@ public class DrawArrow extends ShapeControl implements Serializable {
 		return this.finishedArrow;
 	}
 	
-	public void setShape(Shape finishedParallelogram){
+	public void setShape(Shape finishedArrow){
 		this.finishedArrow = finishedArrow;
 	}
 

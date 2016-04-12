@@ -14,14 +14,16 @@ import java.util.*;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
+@SuppressWarnings("serial")
 public class DrawingCanvas extends JComponent implements Serializable{
-	
-	//Create ArrayList of shapes with anchor points
+	//Create ArrayList for storing drawn objects
 	private ArrayList<Object> anchoredShapes = new ArrayList<Object>();
 	
-	//Create ArrayList objects to store text
-	//TO BE IMPLEMENTED LATER
-	//ArrayList<String> textfield = new ArrayList<String>();
+	//Create ArrayList for undo/redo state
+	private ArrayList<Object> undoState = new ArrayList<Object>();
+	private ArrayList<Object> redoState = new ArrayList<Object>();
+	//Create ArrayList for guidance shape drawing
+	ArrayList<Object> tempShapes = new ArrayList<Object>();
 	
 	private int xDrawStart;
 	private int yDrawStart;
@@ -31,12 +33,14 @@ public class DrawingCanvas extends JComponent implements Serializable{
 	private float yMax;
 	final int snapvalue = 20;
 	Graphics2D graphicsSettings;
-	
+	private Rectangle boundsRectangle = new Rectangle();
 	
 	//Constructor for monitoring events.
 	public DrawingCanvas(){
-		this.setxMax(0);
-		this.setyMax(0);
+		
+		setxMax(800);
+		setyMax(800);
+		
 		//add mouse listeners to canvas
 		addMouseListener(new MouseAdapter(){
 			//for when mouse pressed get x and y
@@ -52,6 +56,16 @@ public class DrawingCanvas extends JComponent implements Serializable{
 								continue;
 							}
 							if(((ShapeControl) getAnchoredShapes().get(index)).returnShape().getBounds2D().contains(getxDrawStart(), getyDrawStart())){
+								//Set undo state
+								setUndoState(new ArrayList<Object>());
+								getUndoState().trimToSize();
+								for(Object u: getAnchoredShapes()){
+									if(u == null)
+										continue;
+									else
+										getUndoState().add(u);
+								}//end for
+								
 								getAnchoredShapes().remove(index);
 								break;
 							}//end if
@@ -121,8 +135,19 @@ public class DrawingCanvas extends JComponent implements Serializable{
 									//Move object to new location
 									AffineTransform translateTo = new AffineTransform();
 									translateTo.translate(xLocDiff, yLocDiff );
-									((ShapeControl) o).setShape(translateTo.createTransformedShape(((ShapeControl) o).returnShape()));
 									
+									//Set undo state
+									setUndoState(new ArrayList<Object>());
+									getUndoState().trimToSize();
+									for(Object u: getAnchoredShapes()){
+										if(u == null)
+											continue;
+										else
+											getUndoState().add(u);
+									}//end for
+									
+									//Update drawn object ArrayList
+									((ShapeControl) o).setShape(translateTo.createTransformedShape(((ShapeControl) o).returnShape()));
 									//Adjust anchors
 									((ShapeControl) o).setAnchorNx(((ShapeControl) o).getAnchorNx() + xLocDiff);
 									((ShapeControl) o).setAnchorNy(((ShapeControl) o).getAnchorNy() + yLocDiff);
@@ -198,6 +223,7 @@ public class DrawingCanvas extends JComponent implements Serializable{
 									//Move again
 									if(snapx > 0 || snapy > 0){
 										translateTo.translate(snapx, snapy);
+										
 										((ShapeControl) o).setShape(translateTo.createTransformedShape(((ShapeControl) o).returnShape()));
 										
 										//Adjust anchors
@@ -226,10 +252,22 @@ public class DrawingCanvas extends JComponent implements Serializable{
 					
 				}//end else if
 				
-				//add shapes to arrayList
-				getAnchoredShapes().add(aShape);
+				//Set undo state
+				setUndoState(new ArrayList<Object>());
+				getUndoState().trimToSize();
+				for(Object u: getAnchoredShapes()){
+					if(u == null)
+						continue;
+					else
+						getUndoState().add(u);
+				}//end for
+				
+				//Add shapes to arrayList
+				if(aShape != null)
+					getAnchoredShapes().add(aShape);
 				
 				NewPage.drawOption = 0;
+				setBounds(getBoundsRectangle());
 				repaint();
 				
 			}//end mouseReleased
@@ -241,7 +279,7 @@ public class DrawingCanvas extends JComponent implements Serializable{
 	public void paint(Graphics g){
 		
 		graphicsSettings = (Graphics2D)g;
-		Shape aShape = null;
+		
 		/*Code taken from: 
 		 * http://www.newthinktank.com/2012/07/java-video-tutorial-49/
 		 */
@@ -358,6 +396,8 @@ public class DrawingCanvas extends JComponent implements Serializable{
 
 	public void setxMax(float xMax) {
 		this.xMax = xMax;
+		getBoundsRectangle().setSize((int) xMax, (int) getyMax());
+		
 	}
 
 	float getyMax() {
@@ -366,6 +406,8 @@ public class DrawingCanvas extends JComponent implements Serializable{
 
 	void setyMax(float yMax) {
 		this.yMax = yMax;
+		getBoundsRectangle().setSize((int)getxMax(), (int) yMax);
+		
 	}
 
 	public ArrayList<Object> getAnchoredShapes() {
@@ -374,6 +416,30 @@ public class DrawingCanvas extends JComponent implements Serializable{
 
 	public void setAnchoredShapes(ArrayList<Object> anchoredShapes) {
 		this.anchoredShapes = anchoredShapes;
+	}
+
+	public ArrayList<Object> getUndoState() {
+		return undoState;
+	}
+
+	public void setUndoState(ArrayList<Object> undoState) {
+		this.undoState = undoState;
+	}
+
+	public ArrayList<Object> getRedoState() {
+		return redoState;
+	}
+
+	public void setRedoState(ArrayList<Object> redoState) {
+		this.redoState = redoState;
+	}
+
+	public Rectangle getBoundsRectangle() {
+		return boundsRectangle;
+	}
+
+	public void setBoundsRectangle(Rectangle boundsRectangle) {
+		this.boundsRectangle = boundsRectangle;
 	}
 	
 }
