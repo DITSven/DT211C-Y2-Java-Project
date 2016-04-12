@@ -156,7 +156,13 @@ public class NewPage extends JFrame implements ActionListener {
 		Object source = e.getSource();
 		
 		if(source == newPageNew){
-			JOptionPane.showMessageDialog(this, "Placeholder");
+			int newPageOption = JOptionPane.showConfirmDialog(this,
+					"Open new page and lose all progress?" ,"New Page?"
+					, JOptionPane.OK_CANCEL_OPTION);
+			if(newPageOption == JOptionPane.OK_OPTION){
+				newPageCanvas.setAnchoredShapes(new ArrayList<Object>());
+				newPageCanvas.repaint();
+			}//end if
 		}
 		if(source == newPageOpen){
 			int fileChoiceOption = fileChoice.showOpenDialog(NewPage.this);
