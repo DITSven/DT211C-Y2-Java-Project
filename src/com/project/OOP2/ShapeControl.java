@@ -7,8 +7,9 @@
 package com.project.OOP2;
 
 import java.awt.Shape;
+import java.io.Serializable;
 
-public abstract class ShapeControl {
+public abstract class ShapeControl implements Serializable {
 	public abstract Shape returnShape();
 	public abstract void setShape(Shape shape);
 	public abstract double getAnchorNx();

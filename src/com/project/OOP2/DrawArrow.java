@@ -9,8 +9,9 @@ package com.project.OOP2;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 
-public class DrawArrow extends ShapeControl {
+public class DrawArrow extends ShapeControl implements Serializable {
 	double x1, x2, y1, y2;
 	Path2D.Float drawArrow;
 	Shape finishedArrow;

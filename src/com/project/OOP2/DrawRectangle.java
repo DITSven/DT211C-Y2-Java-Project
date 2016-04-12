@@ -8,8 +8,9 @@ package com.project.OOP2;
 
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 
-public class DrawRectangle extends ShapeControl {
+public class DrawRectangle extends ShapeControl implements Serializable{
 	float x1, x2, y1, y2;
 	Shape drawRectangle;
 	//Create anchors for snapping
