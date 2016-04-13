@@ -6,34 +6,49 @@
  */
 package com.project.OOP2;
 
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.util.*;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 @SuppressWarnings("serial")
 public class DrawingCanvas extends JComponent implements Serializable{
+	
 	//Create ArrayList for storing drawn objects
 	private ArrayList<Object> anchoredShapes = new ArrayList<Object>();
 	
 	//Create ArrayList for undo/redo state
 	private ArrayList<Object> undoState = new ArrayList<Object>();
 	private ArrayList<Object> redoState = new ArrayList<Object>();
-	//Create ArrayList for guidance shape drawing
-	ArrayList<Object> tempShapes = new ArrayList<Object>();
-	
+		
+	//Position variables
 	private int xDrawStart;
 	private int yDrawStart;
 	private int xDrawEnd;
 	private int yDrawEnd;
+	
+	//Bounding variables
 	private float xMax;
 	private float yMax;
-	final int snapvalue = 20;
-	Graphics2D graphicsSettings;
 	private Rectangle boundsRectangle = new Rectangle();
+	
+	//Snap value
+	final int snapvalue = 20;
+	
+	//Graphics objects
+	static Graphics2D graphicsSettings;
+	static final Font fontUsed = new Font(null, Font.PLAIN, 12);
+	
+	//Variables for guidance drawing
+	private Object tempShape;
+	private boolean paintGuide = false;
+	ArrayList<Object> tempShapes = new ArrayList<Object>();
 	
 	//Constructor for monitoring events.
 	public DrawingCanvas(){
@@ -55,30 +70,89 @@ public class DrawingCanvas extends JComponent implements Serializable{
 							if(getAnchoredShapes().get(index) == null){
 								continue;
 							}
-							if(((ShapeControl) getAnchoredShapes().get(index)).returnShape().getBounds2D().contains(getxDrawStart(), getyDrawStart())){
-								//Set undo state
-								setUndoState(new ArrayList<Object>());
-								getUndoState().trimToSize();
-								for(Object u: getAnchoredShapes()){
-									if(u == null)
-										continue;
-									else
-										getUndoState().add(u);
-								}//end for
-								
-								getAnchoredShapes().remove(index);
-								break;
+							if(getAnchoredShapes().get(index) instanceof ShapeControl){
+								if(((ShapeControl) getAnchoredShapes().get(index)).returnShape().getBounds2D().contains(getxDrawStart(), getyDrawStart())){
+									//Set undo state
+									setUndoState(new ArrayList<Object>());
+									getUndoState().trimToSize();
+									for(Object u: getAnchoredShapes()){
+										if(u == null)
+											continue;
+										else
+											getUndoState().add(u);
+									}//end for
+									
+									getAnchoredShapes().remove(index);
+									break;
+								}//end if
 							}//end if
-						
+							else if(getAnchoredShapes().get(index) instanceof DrawText){
+								if(((DrawText) getAnchoredShapes().get(index)).getBoundsRectangle().contains(getxDrawStart(), getyDrawStart())){
+									//Set undo state
+									setUndoState(new ArrayList<Object>());
+									getUndoState().trimToSize();
+									for(Object u: getAnchoredShapes()){
+										if(u == null)
+											continue;
+										else
+											getUndoState().add(u);
+									}//end for
+									
+									getAnchoredShapes().remove(index);
+									
+									break;
+								}//end if
+							}//end else if
 						}//end for
 					}//end if
-				}
+				}//end if
 			}//end mousePressed
-			
+			public void mouseDragged(MouseEvent e){
+				setTempShape(null);
+				setPaintGuide(true);	
+				tempShapes = new ArrayList<Object>();
+				tempShapes.trimToSize();
+				for(Object o: getAnchoredShapes()){
+					if(o == null)
+						continue;
+					else
+						tempShapes.add(o);
+				}//end for
+				//Create guide image while drawing.
+				if (NewPage.drawOption == 1){
+					DrawTerminal drawTerminal = new DrawTerminal(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
+					setTempShape(drawTerminal.returnShape());
+				}
+				else if (NewPage.drawOption == 2){
+					DrawArrow drawArrow = new DrawArrow(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
+					setTempShape(drawArrow.returnShape());
+				}
+				else if (NewPage.drawOption == 3){
+					DrawRectangle drawRectangle = new DrawRectangle(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
+					setTempShape(drawRectangle.returnShape());
+				}
+				else if (NewPage.drawOption == 4){
+					DrawParallelogram drawParallelogram = new DrawParallelogram(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
+					setTempShape(drawParallelogram.returnShape());
+				}
+				else if (NewPage.drawOption == 5){
+					DrawRhombus drawRhombus = new DrawRhombus(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
+					setTempShape(drawRhombus.returnShape());
+				}
+				else{
+					setTempShape(null);
+				}
+				
+				tempShapes.add(getTempShape());
+				
+				repaint();
+				
+				
+			}//end mouseDragged
 			public void mouseReleased(MouseEvent e){
 				setxDrawEnd(e.getX());
 				setyDrawEnd(e.getY());
-				
+				setPaintGuide(false);
 				Object aShape = null;
 								
 				//call relevant drawing class.
@@ -102,8 +176,9 @@ public class DrawingCanvas extends JComponent implements Serializable{
 					DrawRhombus drawRhombus = new DrawRhombus(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
 					aShape = drawRhombus;
 				}//end else if
-				if (NewPage.drawOption == 6){
-					DrawText drawText = new DrawText(getxDrawStart(), getyDrawStart());
+				else if (NewPage.drawOption == 6){
+					String userInput = JOptionPane.showInputDialog("Enter text: ");
+					DrawText drawText = new DrawText(getxDrawStart(), getyDrawStart(), userInput);
 					aShape = drawText;
 					
 				}//end else if
@@ -115,6 +190,16 @@ public class DrawingCanvas extends JComponent implements Serializable{
 							}//end if
 							else if(o instanceof ShapeControl){
 								if(((ShapeControl) o).returnShape().getBounds2D().contains(getxDrawStart(), getyDrawStart())){
+									//Set undo state
+									setUndoState(new ArrayList<Object>());
+									getUndoState().trimToSize();
+									for(Object u: getAnchoredShapes()){
+										if(u == null)
+											continue;
+										else
+											getUndoState().add(u);
+									}//end for
+									
 									//Get anchor positions for shape selected
 									double a1Nx = ((ShapeControl) o).getAnchorNx();
 									double a1Ny = ((ShapeControl) o).getAnchorNy();
@@ -135,16 +220,6 @@ public class DrawingCanvas extends JComponent implements Serializable{
 									//Move object to new location
 									AffineTransform translateTo = new AffineTransform();
 									translateTo.translate(xLocDiff, yLocDiff );
-									
-									//Set undo state
-									setUndoState(new ArrayList<Object>());
-									getUndoState().trimToSize();
-									for(Object u: getAnchoredShapes()){
-										if(u == null)
-											continue;
-										else
-											getUndoState().add(u);
-									}//end for
 									
 									//Update drawn object ArrayList
 									((ShapeControl) o).setShape(translateTo.createTransformedShape(((ShapeControl) o).returnShape()));
@@ -242,6 +317,26 @@ public class DrawingCanvas extends JComponent implements Serializable{
 									break;
 								}//end if
 							}//end else if
+							else if(((DrawText) o).getBoundsRectangle().contains(getxDrawStart(), getyDrawStart())){
+								//Set undo state
+								setUndoState(new ArrayList<Object>());
+								getUndoState().trimToSize();
+								for(Object u: getAnchoredShapes()){
+									if(u == null)
+										continue;
+									else
+										getUndoState().add(u);
+								}//end for
+								
+								//Variables to hold location difference
+								double xLocDiff = getxDrawEnd() - getxDrawStart();
+								double yLocDiff = getyDrawEnd() - getyDrawStart();
+								
+								//Move object to new location
+								((DrawText)o).setTextx(((DrawText)o).getTextx() + (float)xLocDiff);
+								((DrawText)o).setTexty(((DrawText)o).getTexty() + (float)yLocDiff);
+								
+							}//end else if
 							else
 								continue;
 							
@@ -277,84 +372,51 @@ public class DrawingCanvas extends JComponent implements Serializable{
 	
 	//Control graphical output
 	public void paint(Graphics g){
-		
-		graphicsSettings = (Graphics2D)g;
-		
 		/*Code taken from: 
 		 * http://www.newthinktank.com/2012/07/java-video-tutorial-49/
 		 */
-		// Antialiasing cleans up the jagged lines and defines rendering rules
-            
+		graphicsSettings = (Graphics2D)g;
+		
+		
+		// Antialiasing cleans up the jagged lines and defines rendering rules    
 		graphicsSettings.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
         RenderingHints.VALUE_ANTIALIAS_ON);
 		/*End of code copied*/    
-		
+		graphicsSettings.setFont(fontUsed);
 		//Set the width of the lines drawn
 		graphicsSettings.setStroke(new BasicStroke(1));
-
-		//Set the line color
-		graphicsSettings.setColor(Color.BLACK);
-			
 		
-		/*Code taken from: 
-		 * http://www.newthinktank.com/2012/07/java-video-tutorial-49/
-		 */
-		//Draws images onto page
-		for(Object i: getAnchoredShapes()){
-			if(i != null){
-				if(i instanceof ShapeControl){
-					graphicsSettings.draw(((ShapeControl) i).returnShape());
-					if(((ShapeControl)i).returnShape().getBounds().getMaxX()
-							> getxMax()){
-						setxMax((float) ((ShapeControl)i).returnShape().getBounds().getMaxX());
-						
+		if(isPaintGuide()){
+			//Set the line color
+			graphicsSettings.setColor(Color.LIGHT_GRAY);
+			//Draws images onto page
+			for(Object i: tempShapes){
+				if(i != null){
+					if(i instanceof ShapeControl){
+						graphicsSettings.draw(((ShapeControl) i).returnShape());
 					}//end if
-					if(((ShapeControl)i).returnShape().getBounds().getMaxY()
-							> getyMax()){
-						setyMax((float) ((ShapeControl)i).returnShape().getBounds().getMaxY());
-						
-					}//end if
+					else if (i instanceof DrawText){
+						graphicsSettings.drawString(((DrawText) i).getUserInput(), ((DrawText) i).getTextx(), ((DrawText) i).getTexty());
+					}//end else
 				}//end if
-				else{
-					graphicsSettings.drawString(((DrawText) i).returnText(), ((DrawText) i).getTextx(), ((DrawText) i).getTexty());
-					
-				}//end else
-			}//end if
-		}//end for
-		/*End of code copied*/
-		
-		/*Not working for now	 
-		//Create guide image while drawing.
-		Point drawStart, drawEnd;
-		drawStart = new Point(getxDrawStart(), getyDrawStart());
-		drawEnd = new Point(getxDrawEnd(), getyDrawEnd());
-		if(drawStart != null && drawEnd != null){
-			if (NewPage.drawOption == 1){
-				DrawTerminal drawTerminal = new DrawTerminal(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
-				aShape = drawTerminal.returnShape();
-			}
-			else if (NewPage.drawOption == 2){
-				DrawArrow drawArrow = new DrawArrow(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
-				aShape = drawArrow.returnShape();
-			}
-			else if (NewPage.drawOption == 3){
-				DrawRectangle drawRectangle = new DrawRectangle(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
-				aShape = drawRectangle.returnShape();
-			}
-			else if (NewPage.drawOption == 4){
-				DrawParallelogram drawParallelogram = new DrawParallelogram(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
-				aShape = drawParallelogram.returnShape();
-			}
-			else if (NewPage.drawOption == 5){
-				DrawRhombus drawRhombus = new DrawRhombus(getxDrawStart(), getxDrawEnd(), getyDrawStart(), getyDrawEnd());
-				aShape = drawRhombus.returnShape();
-			}
-			else{
-				aShape = null;
-			}
-			graphicsSettings.draw(aShape);
-		}
-       	*/       	
+			}//end for
+		}//end if
+		else{
+			//Set the line color
+			graphicsSettings.setColor(Color.BLACK);
+			//Draws images onto page
+			for(Object i: getAnchoredShapes()){
+				if(i != null){
+					if(i instanceof ShapeControl){
+						graphicsSettings.draw(((ShapeControl) i).returnShape());
+					}//end if
+					else if (i instanceof DrawText){
+						graphicsSettings.drawString(((DrawText) i).getUserInput(), ((DrawText) i).getTextx(), ((DrawText) i).getTexty());
+					}//end else
+				}//end if
+			}//end for
+		}//end else
+				       	
     }//end paint
 
 	//Getters & Setters
@@ -440,6 +502,22 @@ public class DrawingCanvas extends JComponent implements Serializable{
 
 	public void setBoundsRectangle(Rectangle boundsRectangle) {
 		this.boundsRectangle = boundsRectangle;
+	}
+
+	public Object getTempShape() {
+		return tempShape;
+	}
+
+	public void setTempShape(Object tempShape) {
+		this.tempShape = tempShape;
+	}
+
+	public boolean isPaintGuide() {
+		return paintGuide;
+	}
+
+	public void setPaintGuide(boolean paintGuide) {
+		this.paintGuide = paintGuide;
 	}
 	
 }

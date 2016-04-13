@@ -1,27 +1,27 @@
+/*
+ * Author: C14752305 
+ * Class: DrawText
+ * Date: 13/04/2016
+ * Handles how text is drawn.
+ */
 package com.project.OOP2;
 
+import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
-import javax.swing.JTextField;
 
 public class DrawText implements Serializable {
-	String userInput;
+	private String userInput;
 	private float textx;
 	private float texty;
-	JTextField userTextField;
+	private Rectangle2D boundsRectangle;
 	
-	public DrawText(float textx, float texty){
-		this.setTextx(textx);
-		this.setTexty(texty);
-		this.userTextField = new JTextField("");
-		this.userTextField.setAlignmentX((float)textx);
-		this.userTextField.setAlignmentY((float)texty);
-		this.userInput = this.userTextField.getText();
+	public DrawText(float textx, float texty, String userInput){
+		setTextx(textx);
+		setTexty(texty);
+		setUserInput(userInput);
+		setBoundsRectangle(DrawingCanvas.fontUsed.getStringBounds(getUserInput(), DrawingCanvas.graphicsSettings.getFontRenderContext()));
 	}//end DrawText
-	
-	public String returnText(){
-		return this.userInput;
-	}//end returnText
 	
 	public float getTextx(){
 		return this.textx;
@@ -37,5 +37,21 @@ public class DrawText implements Serializable {
 
 	public void setTexty(float texty) {
 		this.texty = texty;
+	}
+
+	public String getUserInput() {
+		return userInput;
+	}
+
+	public void setUserInput(String userInput) {
+		this.userInput = userInput;
+	}
+
+	public Rectangle2D getBoundsRectangle() {
+		return boundsRectangle;
+	}
+
+	public void setBoundsRectangle(Rectangle2D boundsRectangle) {
+		this.boundsRectangle = boundsRectangle;
 	}
 }
